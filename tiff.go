@@ -58,18 +58,3 @@ func (t *Tiff) Contains(c *Coordinate) bool {
 	// return t.Env.Contains(env2)
 	return t.MinX <= c.X && t.MaxX >= c.X && t.MinY <= c.Y && t.MaxY >= c.Y
 }
-
-func (t1 *Tiff) Intersection(t2 *Tiff) bool {
-	env1 := gdal.Envelope{}
-	env1.SetMinX(t1.MinX)
-	env1.SetMinY(t1.MinY)
-	env1.SetMaxX(t1.MaxX)
-	env1.SetMaxY(t1.MaxY)
-
-	env2 := gdal.Envelope{}
-	env2.SetMinX(t2.MinX)
-	env2.SetMinY(t2.MinY)
-	env2.SetMaxX(t2.MaxX)
-	env2.SetMaxY(t2.MaxY)
-	return env1.Intersects(env2)
-}
