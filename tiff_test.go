@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"testing"
 )
 
 func ExampleExtract() {
@@ -20,4 +21,27 @@ func ExampleExtract() {
 	// Upper right	[11563312.106151, 4314964.027273]
 	// Bottom left	[11559833.372064, 4312093.976939]
 	// Bottom right	[11563312.106151, 4312093.976939]
+}
+
+func TestContains(t *testing.T) {
+	filename := "./example/test/L18/test.tif"
+	tt := Tiff{}
+	tt.Extract(filename)
+	tcs := []struct {
+		c *Coordinate
+		b bool
+	}{
+		{&Coordinate{11559834.0, 4313963.0}, true},
+		{&Coordinate{11559833.0, 4314965.0}, false}, // left
+		{&Coordinate{11559834.0, 4314963.0}, false}, // up
+		{&Coordinate{11563313.0, 4314965.0}, false}, // right
+		{&Coordinate{11563312.0, 4312092.0}, false}, // bottom
+	}
+
+	for _, tc := range tcs {
+		got := tt.Contains(tc.c)
+		if got != tc.b {
+			t.Errorf("want: %v, got: %v", tc.b, got)
+		}
+	}
 }

@@ -1,15 +1,14 @@
 package main
 
-import "github.com/lukeroth/gdal"
+import (
+	"github.com/lukeroth/gdal"
+)
 
 type Tiff struct {
-	TopLeftX float64
-	TopLeftY float64
-	XSize    float64
-	YSize    float64
-	WE       float64
-	NS       float64
-	Points   []Coordinate // order by topleft topright bottomleft bottomright
+	MinX, MinY, MaxX, MaxY float64
+	WE, NS                 float64
+	Points                 []Coordinate // order by topleft topright bottomleft bottomright
+	Env                    gdal.Envelope
 }
 
 type Coordinate struct {
@@ -22,20 +21,44 @@ func (t *Tiff) Extract(filename string) error {
 	if err != nil {
 		return err
 	}
+	defer dataset.Close()
 	// Reference: https://gdal.org/tutorials/geotransforms_tut.html?highlight=coordinate
 	gt := dataset.GeoTransform()
-	t.TopLeftX = gt[0]
-	t.TopLeftY = gt[3]
-	t.XSize = float64(dataset.RasterXSize()) // num of columns
-	t.YSize = float64(dataset.RasterYSize()) // num of rows
-	t.WE = gt[1]
-	t.NS = gt[5]
+	xSize := float64(dataset.RasterXSize()) // num of columns
+	ySize := float64(dataset.RasterYSize()) // num of rows
+	t.MinX, t.MinY = gt[0], gt[3]
+	t.WE, t.NS = gt[1], gt[5]
+	t.MaxX = t.MinX + xSize*t.WE
+	t.MaxY = t.MinY + ySize*t.NS
+	t.Env.SetMinX(t.MinX)
+	t.Env.SetMinY(t.MinY)
+	t.Env.SetMaxX(t.MaxX)
+	t.Env.SetMaxY(t.MaxY)
 	// t: top, b: bottom, l: left, r: right
 	t.Points = []Coordinate{
-		{t.TopLeftX, t.TopLeftY},                               // top left x and y
-		{t.TopLeftX + t.XSize*t.WE, t.TopLeftY},                // top right x and y
-		{t.TopLeftX, t.TopLeftY + t.YSize*t.NS},                // bottom left x and y
-		{t.TopLeftX + t.XSize*t.WE, t.TopLeftY + t.YSize*t.NS}, // bottom right x and y
+		{t.MinX, t.MinY}, // top left x and y
+		{t.MaxX, t.MinY}, // top right x and y
+		{t.MinX, t.MaxY}, // bottom left x and y
+		{t.MaxX, t.MaxY}, // bottom right x and y
 	}
 	return nil
+}
+
+func (t *Tiff) Contains(c *Coordinate) bool {
+	return t.MinX <= c.X && t.MinY <= c.Y && t.MaxX >= c.X && t.MaxY >= c.Y
+}
+
+func (t1 *Tiff) Intersection(t2 *Tiff) bool {
+	env1 := gdal.Envelope{}
+	env1.SetMinX(t1.MinX)
+	env1.SetMinY(t1.MinY)
+	env1.SetMaxX(t1.MaxX)
+	env1.SetMaxY(t1.MaxY)
+
+	env2 := gdal.Envelope{}
+	env2.SetMinX(t2.MinX)
+	env2.SetMinY(t2.MinY)
+	env2.SetMaxX(t2.MaxX)
+	env2.SetMaxY(t2.MaxY)
+	return env1.Intersects(env2)
 }
