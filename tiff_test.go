@@ -31,7 +31,7 @@ func TestContains(t *testing.T) {
 		c *Coordinate
 		b bool
 	}{
-		{&Coordinate{11559834.0, 4313963.0}, true},
+		{&Coordinate{11559934.372064, 4313963.027273}, true},
 		{&Coordinate{11559833.0, 4314965.0}, false}, // left
 		{&Coordinate{11559834.0, 4314963.0}, false}, // up
 		{&Coordinate{11563313.0, 4314965.0}, false}, // right
@@ -40,8 +40,12 @@ func TestContains(t *testing.T) {
 
 	for _, tc := range tcs {
 		got := tt.Contains(tc.c)
+		fmt.Println(tt.MinX)
 		if got != tc.b {
-			t.Errorf("want: %v, got: %v", tc.b, got)
+			fmt.Printf("tt.MinX is: \t%f\nc.c.X is: \t%f\n", tt.MinX, tc.c.X)
+			fmt.Printf("tt.MinY is: \t%f\ntc.c.Y is: \t%f\n", tt.MinY, tc.c.Y)
+			fmt.Printf("tt.MaxX is: \t%f\ntc.c.X is: \t%f\n", tt.MaxX, tc.c.X)
+			fmt.Printf("tt.MaxY is: \t%f\ntc.c.Y is: \t%f\n", tt.MaxY, tc.c.Y)
 		}
 	}
 }

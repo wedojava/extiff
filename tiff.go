@@ -45,7 +45,24 @@ func (t *Tiff) Extract(filename string) error {
 }
 
 func (t *Tiff) Contains(c *Coordinate) bool {
-	return t.MinX <= c.X && t.MinY <= c.Y && t.MaxX >= c.X && t.MaxY >= c.Y
+	// env2 := gdal.Envelope{}
+	// env2.SetMinX(c.X)
+	// env2.SetMaxX(c.X)
+	// env2.SetMinY(c.Y)
+	// env2.SetMaxY(c.Y)
+	// return t.Env.Contains(env2)
+	rt := false
+	if t.WE >= 0 {
+		rt = t.MinX <= c.X && t.MaxX >= c.X
+	} else {
+		rt = t.MinX >= c.X && t.MaxX <= c.X
+	}
+	if t.NS >= 0 {
+		rt = rt && t.MinY <= c.Y && t.MaxY >= c.Y
+	} else {
+		rt = rt && t.MinY >= c.Y && t.MaxY >= c.Y
+	}
+	return rt
 }
 
 func (t1 *Tiff) Intersection(t2 *Tiff) bool {
