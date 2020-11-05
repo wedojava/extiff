@@ -26,10 +26,15 @@ func (t *Tiff) Extract(filename string) error {
 	gt := dataset.GeoTransform()
 	xSize := float64(dataset.RasterXSize()) // num of columns
 	ySize := float64(dataset.RasterYSize()) // num of rows
-	t.MinX, t.MinY = gt[0], gt[3]
 	t.WE, t.NS = gt[1], gt[5]
-	t.MaxX = t.MinX + xSize*t.WE
-	t.MaxY = t.MinY + ySize*t.NS
+	t.MinX, t.MaxX = gt[0], gt[0]+xSize*t.WE
+	t.MinY, t.MaxY = gt[3], gt[3]+ySize*t.NS
+	if t.MinX > t.MaxX {
+		t.MinX, t.MaxX = t.MaxX, t.MinX
+	}
+	if t.MinY > t.MaxY {
+		t.MinY, t.MaxY = t.MaxY, t.MinY
+	}
 	t.Env.SetMinX(t.MinX)
 	t.Env.SetMinY(t.MinY)
 	t.Env.SetMaxX(t.MaxX)
@@ -51,18 +56,7 @@ func (t *Tiff) Contains(c *Coordinate) bool {
 	// env2.SetMinY(c.Y)
 	// env2.SetMaxY(c.Y)
 	// return t.Env.Contains(env2)
-	rt := false
-	if t.WE >= 0 {
-		rt = t.MinX <= c.X && t.MaxX >= c.X
-	} else {
-		rt = t.MinX >= c.X && t.MaxX <= c.X
-	}
-	if t.NS >= 0 {
-		rt = rt && t.MinY <= c.Y && t.MaxY >= c.Y
-	} else {
-		rt = rt && t.MinY >= c.Y && t.MaxY >= c.Y
-	}
-	return rt
+	return t.MinX <= c.X && t.MaxX >= c.X && t.MinY <= c.Y && t.MaxY >= c.Y
 }
 
 func (t1 *Tiff) Intersection(t2 *Tiff) bool {
