@@ -23,4 +23,5 @@ func main() {
 			}
 		}
 	}
+	fmt.Println(ts) // why?
 }
