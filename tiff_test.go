@@ -6,27 +6,21 @@ import (
 )
 
 func ExampleExtract() {
-	filename := "./example/test/L18/test.tif"
-	tt := Tiff{}
-	tt.Extract(filename)
-	fmt.Printf("w-e: %f, n-s: %f\nUpper left\t[%f, %f]\nUpper right\t[%f, %f]\nBottom left\t[%f, %f]\nBottom right\t[%f, %f]\n",
-		tt.WE, tt.NS,
-		tt.Points[0].X, tt.Points[0].Y,
-		tt.Points[1].X, tt.Points[1].Y,
-		tt.Points[2].X, tt.Points[2].Y,
-		tt.Points[3].X, tt.Points[3].Y)
+	tt := Tiff{Name: "test.tif", Path: "./example/test/L18"}
+	tt.Extract()
+	fmt.Printf("w-e: %f, n-s: %f\nMinX\t%f\nMinY\t%f\nMaxX\t%f\nMaxY\t%f\n",
+		tt.WE, tt.NS, tt.MinX, tt.MinY, tt.MaxX, tt.MaxY)
 	// Output:
 	// w-e: 1.194620, n-s: -1.194361
-	// Upper left	[11559833.372064, 4312093.976939]
-	// Upper right	[11563312.106151, 4312093.976939]
-	// Bottom left	[11559833.372064, 4314964.027273]
-	// Bottom right	[11563312.106151, 4314964.027273]
+	// MinX	11559833.372064
+	// MinY	4312093.976939
+	// MaxX	11563312.106151
+	// MaxY	4314964.027273
 }
 
 func TestContains(t *testing.T) {
-	filename := "./example/test/L18/test.tif"
-	tt := Tiff{}
-	tt.Extract(filename)
+	tt := Tiff{Name: "test.tif", Path: "./example/test/L18"}
+	tt.Extract()
 	tcs := []struct {
 		c *Coordinate
 		b bool

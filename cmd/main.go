@@ -1,16 +1,26 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"log"
+
+	"github.com/wedojava/extiff"
 )
 
 func main() {
-	flag.Parse()
-	filename := flag.Arg(0)
-	filename = "../example/test/L18/test.tif"
-	if filename == "" {
-		fmt.Printf("Usage: cootiff <filename>\n")
-		return
+	as, err := extiff.ReadArea("./example/config.txt")
+	ts, err := extiff.GetTifs("./example")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, t := range ts {
+		t.Extract()
+		for _, a := range as {
+			if a.Env.Intersects(t.Env) {
+				fmt.Println("matched one")
+			} else {
+				fmt.Println("not matched")
+			}
+		}
 	}
 }

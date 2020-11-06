@@ -1,14 +1,20 @@
 package extiff
 
 import (
+	"fmt"
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/lukeroth/gdal"
 )
 
 type Tiff struct {
 	MinX, MinY, MaxX, MaxY float64
 	WE, NS                 float64
-	Points                 []Coordinate // order by topleft topright bottomleft bottomright
 	Env                    gdal.Envelope
+	Name, FilePath         string
 }
 
 type Coordinate struct {
@@ -16,8 +22,34 @@ type Coordinate struct {
 	Y float64
 }
 
-func (t *Tiff) Extract(filename string) error {
-	dataset, err := gdal.Open(filename, gdal.ReadOnly)
+// GetTifs walk the target folder (default is `.`), catch files have suffix `.tif`
+func GetTifs(dir string) (ts []Tiff, err error) {
+	if dir == "" {
+		dir = "./"
+	}
+	_, err = os.Stat(dir)
+	if err != nil && os.IsNotExist(err) {
+		return
+	}
+	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			log.Printf("prevent panic by handling failure accessing a path %q: %v\n", path, err)
+			return err
+		}
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ".tif") {
+			fmt.Printf("deal with file or dir: %q\n", path)
+			ts = append(ts, Tiff{Name: info.Name(), FilePath: path})
+		}
+		return nil
+	})
+	if err != nil {
+		fmt.Printf("walking the path %s error : %v\n", dir, err)
+	}
+	return
+}
+
+func (t *Tiff) Extract() error {
+	dataset, err := gdal.Open(t.FilePath, gdal.ReadOnly)
 	if err != nil {
 		return err
 	}
@@ -39,13 +71,6 @@ func (t *Tiff) Extract(filename string) error {
 	t.Env.SetMinY(t.MinY)
 	t.Env.SetMaxX(t.MaxX)
 	t.Env.SetMaxY(t.MaxY)
-	// t: top, b: bottom, l: left, r: right
-	t.Points = []Coordinate{
-		{t.MinX, t.MinY}, // top left x and y
-		{t.MaxX, t.MinY}, // top right x and y
-		{t.MinX, t.MaxY}, // bottom left x and y
-		{t.MaxX, t.MaxY}, // bottom right x and y
-	}
 	return nil
 }
 
