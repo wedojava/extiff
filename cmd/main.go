@@ -15,13 +15,10 @@ func main() {
 	}
 	for _, t := range ts {
 		t.Extract()
-		for _, a := range as {
-			if a.Env.Intersects(t.Env) {
-				fmt.Println("matched one")
-			} else {
-				fmt.Println("not matched")
-			}
-		}
+		t.SetArea(as)
 	}
-	fmt.Println(ts) // why?
+	// Remain for test
+	for _, t := range ts {
+		fmt.Println(t.Areas)
+	}
 }

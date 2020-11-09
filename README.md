@@ -5,7 +5,7 @@ ExTiff is the tool to extract coordinates from tif file.
 # TODO
 
  - [x] Walk the target folder (default is `.`), catch files have suffix `.tif`
- - [ ] Analyzing if areas or point is intersected with tif file
+ - [x] Analyzing if areas or point is intersected with tif file
  - [ ] If tif file is single, copy to `output` folder with name of area.
  - [ ] If tif file has sibling files, copy the father folder to `output` folder with name of Area.
 

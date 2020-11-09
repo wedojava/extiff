@@ -6,7 +6,7 @@ import (
 )
 
 func ExampleExtract() {
-	tt := Tiff{Name: "test.tif", Path: "./example/test/L18"}
+	tt := Tiff{Name: "test.tif", FilePath: "./example/test/L18/test.tif"}
 	tt.Extract()
 	fmt.Printf("w-e: %f, n-s: %f\nMinX\t%f\nMinY\t%f\nMaxX\t%f\nMaxY\t%f\n",
 		tt.WE, tt.NS, tt.MinX, tt.MinY, tt.MaxX, tt.MaxY)
@@ -19,7 +19,7 @@ func ExampleExtract() {
 }
 
 func TestContains(t *testing.T) {
-	tt := Tiff{Name: "test.tif", Path: "./example/test/L18"}
+	tt := Tiff{Name: "test.tif", FilePath: "./example/test/L18/test.tif"}
 	tt.Extract()
 	tcs := []struct {
 		c *Coordinate
@@ -41,5 +41,30 @@ func TestContains(t *testing.T) {
 			fmt.Printf("tt.MaxY is: \t%f\ntc.c.Y is: \t%f\n", tt.MaxY, tc.c.Y)
 			t.Error("error occur, check the output info.")
 		}
+	}
+}
+
+func TestSetArea(t *testing.T) {
+	as, err := ReadArea("./example/config.txt")
+	if err != nil {
+		t.Errorf("ReadArea err: %v", err)
+	}
+	tif := Tiff{FilePath: "./example/test/L18/test.tif"}
+	err = tif.Extract()
+	if err != nil {
+		t.Errorf("Extract err: %v", err)
+	}
+	tif.SetArea(as)
+	i := 0
+	for _, ta := range tif.Areas {
+		if ta.Name == "Shot1" {
+			i++
+		}
+		if ta.Name == "Shot2" {
+			i++
+		}
+	}
+	if i != 2 {
+		t.Errorf("tif areas not match all: %v", tif.Areas)
 	}
 }

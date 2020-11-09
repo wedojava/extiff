@@ -15,6 +15,7 @@ type Tiff struct {
 	WE, NS                 float64
 	Env                    gdal.Envelope
 	Name, FilePath         string
+	Areas                  []Area
 }
 
 type Coordinate struct {
@@ -23,7 +24,7 @@ type Coordinate struct {
 }
 
 // GetTifs walk the target folder (default is `.`), catch files have suffix `.tif`
-func GetTifs(dir string) (ts []Tiff, err error) {
+func GetTifs(dir string) (ts []*Tiff, err error) {
 	if dir == "" {
 		dir = "./"
 	}
@@ -38,7 +39,7 @@ func GetTifs(dir string) (ts []Tiff, err error) {
 		}
 		if !info.IsDir() && strings.HasSuffix(info.Name(), ".tif") {
 			fmt.Printf("deal with file or dir: %q\n", path)
-			ts = append(ts, Tiff{Name: info.Name(), FilePath: path})
+			ts = append(ts, &Tiff{Name: info.Name(), FilePath: path})
 		}
 		return nil
 	})
@@ -82,4 +83,12 @@ func (t *Tiff) Contains(c *Coordinate) bool {
 	// env2.SetMaxY(c.Y)
 	// return t.Env.Contains(env2)
 	return t.MinX <= c.X && t.MaxX >= c.X && t.MinY <= c.Y && t.MaxY >= c.Y
+}
+
+func (t *Tiff) SetArea(as []Area) {
+	for _, a := range as {
+		if a.Env.Intersects(t.Env) {
+			t.Areas = append(t.Areas, a)
+		}
+	}
 }
