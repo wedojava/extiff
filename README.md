@@ -1,13 +1,31 @@
 # ExTiff
 
-ExTiff is the tool to extract coordinates from tif file.
+ExTiff is the tool to extract coordinates from tif file, than rename it as the location it is. The location is list in `config.txt`.
+
+# Usage
+
+## Prepare
+
+`~/config.txt`:
+```
+AreaName1: 11559935.372064, 4313966.027273, 11563310.106151, 4314960.027273
+AreaName2: 11559935.372064, 4313966.027273, 11563310.106151, 4314960.027273
+```
+Config fields above is area name, min x, min y, max x, max y respectively.  
+
+`config.txt` can be located to any place but User profile folder in default.  
+
+## Run
+run the command in your terminal:
+```
+./extiff
+```
 
 # TODO
 
  - [x] Walk the target folder (default is `.`), catch files have suffix `.tif`
  - [x] Analyzing if areas or point is intersected with tif file
- - [ ] If tif file is single, copy to `output` folder with name of area.
- - [ ] If tif file has sibling files, copy the father folder to `output` folder with name of Area.
+ - [x] Get tif files and match the areas list in ~/config.txt
 
 # For Developers
 
