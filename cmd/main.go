@@ -8,17 +8,12 @@ import (
 )
 
 func main() {
-	as, err := extiff.ReadArea("./example/config.txt")
-	ts, err := extiff.GetTifs("./example")
+	ts, err := extiff.Handle("./example/config.txt", "./example/test/L18/test.tif")
 	if err != nil {
 		log.Fatal(err)
 	}
-	for _, t := range ts {
-		t.Extract()
-		t.SetArea(as)
-	}
 	// Remain for test
 	for _, t := range ts {
-		fmt.Println(t.Areas)
+		fmt.Println(t)
 	}
 }

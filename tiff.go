@@ -14,7 +14,7 @@ type Tiff struct {
 	MinX, MinY, MaxX, MaxY float64
 	WE, NS                 float64
 	Env                    gdal.Envelope
-	Name, FilePath         string
+	Name, FilePath, Dir    string
 	Areas                  []Area
 }
 
@@ -38,8 +38,10 @@ func GetTifs(dir string) (ts []*Tiff, err error) {
 			return err
 		}
 		if !info.IsDir() && strings.HasSuffix(info.Name(), ".tif") {
-			fmt.Printf("deal with file or dir: %q\n", path)
-			ts = append(ts, &Tiff{Name: info.Name(), FilePath: path})
+			ts = append(ts,
+				&Tiff{Name: info.Name(),
+					FilePath: path,
+					Dir:      filepath.Dir(path)})
 		}
 		return nil
 	})
@@ -91,4 +93,20 @@ func (t *Tiff) SetArea(as []Area) {
 			t.Areas = append(t.Areas, a)
 		}
 	}
+}
+
+func (t *Tiff) Rename() error {
+	// If parent dir need rename too
+
+	// just rename tif itself
+	as := t.Areas
+	newname := t.Name
+	for _, a := range as {
+		newname = "[" + a.Name + "]" + newname
+	}
+	err := os.Rename(t.FilePath, filepath.Join(t.Dir, newname))
+	if err != nil {
+		return err
+	}
+	return nil
 }
