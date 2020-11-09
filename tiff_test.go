@@ -6,7 +6,7 @@ import (
 )
 
 func ExampleExtract() {
-	tt := Tiff{Name: "test.tif", FilePath: "./example/test/L18/test.tif"}
+	tt := Tiff{Name: "test.tif", FilePath: "./example/test/test.tif"}
 	tt.Extract()
 	fmt.Printf("w-e: %f, n-s: %f\nMinX\t%f\nMinY\t%f\nMaxX\t%f\nMaxY\t%f\n",
 		tt.WE, tt.NS, tt.MinX, tt.MinY, tt.MaxX, tt.MaxY)
@@ -19,7 +19,7 @@ func ExampleExtract() {
 }
 
 func TestContains(t *testing.T) {
-	tt := Tiff{Name: "test.tif", FilePath: "./example/test/L18/test.tif"}
+	tt := Tiff{Name: "test.tif", FilePath: "./example/test/test.tif"}
 	tt.Extract()
 	tcs := []struct {
 		c *Coordinate
@@ -49,7 +49,7 @@ func TestSetArea(t *testing.T) {
 	if err != nil {
 		t.Errorf("ReadArea err: %v", err)
 	}
-	tif := Tiff{FilePath: "./example/test/L18/test.tif"}
+	tif := Tiff{FilePath: "./example/test/test.tif"}
 	err = tif.Extract()
 	if err != nil {
 		t.Errorf("Extract err: %v", err)

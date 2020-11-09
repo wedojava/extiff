@@ -2,6 +2,7 @@ package extiff
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -16,6 +17,7 @@ type Tiff struct {
 	Env                    gdal.Envelope
 	Name, FilePath, Dir    string
 	Areas                  []Area
+	Siblings               []string
 }
 
 type Coordinate struct {
@@ -95,18 +97,39 @@ func (t *Tiff) SetArea(as []Area) {
 	}
 }
 
-func (t *Tiff) Rename() error {
-	// If parent dir need rename too
-
-	// just rename tif itself
-	as := t.Areas
-	newname := t.Name
-	for _, a := range as {
-		newname = "[" + a.Name + "]" + newname
+func (t *Tiff) GetSiblings() {
+	ss := []string{}
+	prename := strings.Split(t.Name, ".tif")[0]
+	fs, _ := ioutil.ReadDir(t.Dir)
+	for _, f := range fs {
+		fname := f.Name()
+		if strings.HasPrefix(fname, prename) {
+			ss = append(ss, fname)
+		}
 	}
-	err := os.Rename(t.FilePath, filepath.Join(t.Dir, newname))
+	t.Siblings = ss
+}
+
+func (t *Tiff) Rename() error {
+	prefix := ""
+	as := t.Areas
+	for _, a := range as {
+		prefix = "[" + a.Name + "]" + prefix
+	}
+	err := os.Rename(t.FilePath, filepath.Join(t.Dir, prefix+t.Name))
 	if err != nil {
 		return err
+	}
+	t.GetSiblings()
+	for _, s := range t.Siblings {
+		err = os.Rename(filepath.Join(t.Dir, s), filepath.Join(t.Dir, prefix+s))
+		if err != nil {
+			return err
+		}
+	}
+	prename := strings.Split(t.Name, ".tif")[0]
+	if strings.Contains(t.Dir, prename) {
+		os.Rename(t.Dir, strings.ReplaceAll(t.Dir, prename, prefix+prename))
 	}
 	return nil
 }
