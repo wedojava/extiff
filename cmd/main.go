@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/wedojava/extiff"
 )
@@ -14,27 +12,23 @@ var (
 	src string = "./"
 )
 
+func init() {
+	fmt.Println("[!] Input your config file path (`./config.txt` is default while you input nothing):")
+	fmt.Print("[*] ->")
+	fmt.Scanln(&cfg)
+	fmt.Println("[!] Input path of tifs located (`./` is default while you input nothing):")
+	fmt.Print("[*] ->")
+	fmt.Scanln(&src)
+	fmt.Printf("[config]: %s\n[tif at]: %s\n", cfg, src)
+}
+
 func main() {
-	input := bufio.NewScanner(os.Stdin)
-	fmt.Println("[!] Input your config file path: (`./config.txt` is default while you input nothing)")
-	for input.Scan() {
-		if line := input.Text(); line != "" {
-			cfg = input.Text()
-		}
-		break
-	}
-	fmt.Println("[!] Input path of tifs located: (`./` is default while you input nothing)")
-	for input.Scan() {
-		if line := input.Text(); line != "" {
-			src = input.Text()
-		}
-		break
-	}
+	log.Println("[!] Many years later ...")
 	_, err := extiff.Handle(cfg, src)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("[+] Done.")
+	log.Println("[!] Done.")
 	// Remain for test
 	// for _, t := range ts {
 	//         fmt.Println(t)
