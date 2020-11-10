@@ -26,7 +26,7 @@ func ReadArea(cfgPath string) (as []Area, err error) {
 		cfgPath = path.Join(cfgPath, "config.txt")
 	}
 
-	f, err := os.OpenFile(cfgPath, os.O_RDWR|os.O_CREATE, 0755)
+	f, err := os.OpenFile(cfgPath, os.O_RDWR, 0755)
 	if err != nil {
 		log.Fatal(err)
 	}
