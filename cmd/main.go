@@ -23,12 +23,12 @@ func init() {
 }
 
 func main() {
-	log.Println("[!] Many years later ...")
+	fmt.Println("[!] Many years later ...")
 	_, err := extiff.Handle(cfg, src)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("[!] Done.")
+	fmt.Println("[!] Done.")
 	// Remain for test
 	// for _, t := range ts {
 	//         fmt.Println(t)
