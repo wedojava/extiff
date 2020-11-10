@@ -8,8 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	// "github.com/lukeroth/gdal"
-	gdal "github.com/tingold/gdal-1"
+	"github.com/lukeroth/gdal"
 )
 
 type Tiff struct {

@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	gdal "github.com/tingold/gdal-1"
+	"github.com/lukeroth/gdal"
 )
 
 type Area struct {
