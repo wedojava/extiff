@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/lukeroth/gdal"
+	"github.com/wedojava/gdal"
 )
 
 type Tiff struct {

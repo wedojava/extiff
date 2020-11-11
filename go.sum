@@ -1,2 +1,2 @@
-github.com/tingold/gdal-1 v0.0.0-20200805034744-092f31c3aae1 h1:KuZ12SjJV73qwNVSiDbHsXvL5tsgP3sTerjjHxrRkwc=
-github.com/tingold/gdal-1 v0.0.0-20200805034744-092f31c3aae1/go.mod h1:LRNA37mpRTTkfgrPHX1USpGIzndwMyfRY4cyE69RArA=
+github.com/wedojava/gdal v0.0.1 h1:UENTMxBxTNZbRcavxUFKd9zKoonRk03BxlsNo7Nwb94=
+github.com/wedojava/gdal v0.0.1/go.mod h1:C2IU+yn3TLpZ+e3/+os+P2c15rtTeGcM4jrzKISs5ZE=
